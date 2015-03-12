@@ -28,7 +28,10 @@ public class Generate : MonoBehaviour
     int waterX = 0;
     int waterY = 0;
 
+    int lastIncrememt = 0   ;
     int increment = 1;
+    bool incrementTooHigh = false;
+    bool incrementTooLow = false;
 
 	void Start () 
     {
@@ -69,66 +72,95 @@ public class Generate : MonoBehaviour
 
         for(int y = maxYB; y < maxYT; y++)
         {
+            Debug.Log(increment);
+            if (increment > 2)
+                incrementTooHigh = true;
+
+            else
+                incrementTooHigh = false;
+   
+            if (increment < -2)
+                incrementTooLow = true;
+
+            else
+                incrementTooLow = false;
+
+            
+            if (!incrementTooHigh && !incrementTooLow)
+                increment = Random.Range(lastIncrememt - 1, lastIncrememt + 1);
+
+            else if(incrementTooHigh)
+                increment = Random.Range(lastIncrememt - 1, lastIncrememt);
+
+            else if (incrementTooLow)
+                increment = Random.Range(lastIncrememt, lastIncrememt + 1);
+
+            lastIncrememt = increment;
+
             if(y < 0)
             {
-                l = Random.Range(((xPeakPosition - y) + maxXL) - 1, ((xPeakPosition - y) + maxXL) + 1);
-                r = Random.Range(((xPeakPosition + y) + maxXR) - 1, ((xPeakPosition + y) + maxXR) + 1);
+                l = Random.Range(((xPeakPosition - y) + maxXL) - increment, ((xPeakPosition - y) + maxXL) + increment);
+                r = Random.Range(((xPeakPosition + y) + maxXR) - increment, ((xPeakPosition + y) + maxXR) + increment);
             }
             else
             {
-                l = Random.Range(((xPeakPosition + y) + maxXL) - 1, ((xPeakPosition + y) + maxXL) + 1);
-                r = Random.Range(((xPeakPosition - y) + maxXR) - 1, ((xPeakPosition - y) + maxXR) + 1);
+                l = Random.Range(((xPeakPosition + y) + maxXL) - increment, ((xPeakPosition + y) + maxXL) + increment);
+                r = Random.Range(((xPeakPosition - y) + maxXR) - increment, ((xPeakPosition - y) + maxXR) + increment);
             }
             for(int x = l; x < r; x++)
             {
+                createObject(x,y,0);
                 //fills top and bottom
-                if (y == maxYB + 2 || y == maxYT - 3)
-                    createObject(x, y, 1); //sand
+                //if (y == maxYB + 2 || y == maxYT - 3)
+                //    createObject(x, y, 1); //sand
 
-                if (y <= maxYB + 2 || y >= maxYT - 3)
-                    createObject(x, y, 2); //water
+                //if (y == maxYB + 3 || y == maxYT - 4)
+                //    createObject(x, y, 1); //sand
 
-                if (y > maxYB + 2 && y < maxYT - 3)
-                    createObject(x, y, 0); //grass
+                //if (y <= maxYB + 1 || y >= maxYT - 2)
+                //    createObject(x, y, 2); //water
 
-                if ((y > maxYB + 2 && y < maxYT - 3) || (y == maxYB + 2 || y == maxYT - 3))
-                    if(Random.Range(0,20) == 5)
-                        createObject(x, y, 3); //tree
+                //if (y > maxYB + 1 && y < maxYT - 2)
+                //    createObject(x, y, 0); //grass
+
+                //if ((y > maxYB + 2 && y < maxYT - 3) || (y == maxYB + 2 || y == maxYT - 3))
+                //    if(Random.Range(0,20) == 5)
+                //        createObject(x, y, 3); //trees
 
                 //fills sides
-                if (x == r - 1)
-                {
-                    if (y > maxYB + 2 && y < maxYT - 3)
-                        createObject(r, y, 1);
-                    else
-                        createObject(r, y, 2);
+                //if (x == r - 2)
+                //{
+                //    if (y > maxYB + 2 && y < maxYT - 3)
+                //        createObject(r, y, 1);
+                //    else
+                //        createObject(r, y, 2);
                     //--------------------------
-                    for (int i2 = 1; i2 < 15; i2++)//add wave/shore/foam block when i2 == 4
-                        if (i2 <= 3)
-                            if (y > maxYB + 2 && y < maxYT - 3)
-                                createObject(r + i2, y, 1);
-                            else
-                                createObject(r + i2, y, 2);
-                        else
-                            createObject(r + i2, y, 2);
+                    //for (int i2 = 1; i2 < 15; i2++)//add wave/shore/foam block when i2 == 4
+                    //    if (i2 <= 6)
+                    //        if (y > maxYB + 2 && y < maxYT - 3)
+                    //            createObject(r + i2, y, 1);
+                    //        else
+                    //            createObject(r + i2, y, 2);
+                    //    else
+                    //        createObject(r + i2, y, 2);
                     //--------------------------
-                }
-                else if (x == l)
-                {
-                    if (y > maxYB + 2 && y < maxYT - 3)
-                        createObject(l - 1, y, 1);
-                    else
-                        createObject(l - 1, y, 2);
+                //}
+                //else if (x == l)
+                //{
+                //    if (y > maxYB + 2 && y < maxYT - 3)
+                //        createObject(l - 1, y, 1);
+                //    else
+                //        createObject(l - 1, y, 2);
                     //--------------------------
-                    for (int i2 = 2; i2 < 15; i2++)//add wave/shore/foam block when i2 == 5
-                        if(i2 <= 4)
-                            if (y > maxYB + 2 && y < maxYT - 3)
-                                createObject(l - i2, y, 1);
-                            else
-                                createObject(l - i2, y, 2);
-                        else
-                            createObject(l - i2, y, 2);
-                }
+                    //for (int i2 = 2; i2 < 15; i2++)//add wave/shore/foam block when i2 == 5
+                    //    if(i2 <= 6)
+                    //        if (y > maxYB + 2 && y < maxYT - 3)
+                    //            createObject(l - i2, y, 1);
+                    //        else
+                    //            createObject(l - i2, y, 2);
+                    //    else
+                    //        createObject(l - i2, y, 2);
+                //}
             }
         }
 
@@ -186,6 +218,7 @@ public class Generate : MonoBehaviour
     }
     void clearObjects()
     {
+        lastIncrememt = 2;
         foreach (GameObject g in grassList)
             Destroy(g);
         grassList.RemoveRange(0, grassList.Count);
