@@ -4,141 +4,62 @@ using System.Collections.Generic;
 
 public class Generate : MonoBehaviour 
 {
-    public List<GameObject> islandList;
     public List<GameObject> grassList;
     public List<GameObject> sandList;
     public List<GameObject> waterList;
     public List<GameObject> treeList;
-
-    public GameObject islands;
+    GameObject creationObject;
     public GameObject water;
     public GameObject grass;
     public GameObject sand;
     public GameObject tree;
-    GameObject creationObject;
-    GameObject islandParent;
-    GameObject grassParent;
-    GameObject sandParent;
-    GameObject waterParent;
-    GameObject treeParent;
-
     public int xMin = 6;
     public int xMax = 15;
     public int yMin = 6;
     public int yMax = 15;
-    public int xBounds = 0;
-    public int playerBoundsX = 0;
-    public int playerBoundsY = 0;
-    public int islandsToGenerate = 6;
-
     int sandCounter = 0;
     int grassCounter = 0;
     int waterCounter = 0;
     int treeCounter = 0;
-    int increment = 1;
-    int gradualGenCycle = 0;
+    int grassX = 0;
+    int grassY = 0;
+    int sandX = 0;
+    int sandY = 0;
+    int waterX = 0;
+    int waterY = 0;
 
-    public bool gradGen = false;
+    int increment = 1;
 
 	void Start () 
     {
-        islandList = new List<GameObject>();
         grassList = new List<GameObject>();
         sandList = new List<GameObject>();
         waterList = new List<GameObject>();
         treeList = new List<GameObject>();
-
-        for(int i = 0; i < islandsToGenerate; i++)
-        {
-            if(i == 0)
-            {
-                playerBoundsX = 0;
-                playerBoundsY = 0;
-            }
-            if(i == 1)
-            {
-                playerBoundsX = 60;
-                playerBoundsY = 60;
-            }
-            if (i == 2)
-            {
-                playerBoundsX = -60;
-                playerBoundsY = 60;
-            }
-            if (i == 3)
-            {
-                playerBoundsX = -60;
-                playerBoundsY = -60;
-            }
-            if (i == 4)
-            {
-                playerBoundsX = 60;
-                playerBoundsY = -60;
-            }
-            if (i > 4)
-            {
-                playerBoundsX = 60 * (i - 2);
-                playerBoundsY = -60;
-            }
-            generateLand();
-        }
-        
 	}
-	//create bounds for each island, name each island, maybe weather per island?
+	
 	void Update () 
     {
-	    if(Input.GetKeyDown(KeyCode.Q))
+	    if(Input.GetKeyDown(KeyCode.E))
         {
             clearObjects();
-            playerBoundsX = 0;
-            playerBoundsY = 0;
             generateLand();
         }
-        //if (transform.position.x > playerBoundsX || transform.position.y > playerBoundsY)
-        //{
-        //    //playerBounds += 60;
-        //    //generateLand();
-        //}
-        //if (transform.position.x < -playerBoundsX || transform.position.y < -playerBoundsY)
-        //{
-
-        //}
 	}
+
     public void generateLand()
     {
-        islandParent = new GameObject();
-        islandParent.name = "Island"+islandList.Count;
-        islandParent.transform.SetParent(islands.transform, true);
-        islandList.Add(islandParent);
-        
-
-        grassParent = new GameObject();
-        grassParent.name = "Grass";
-        grassParent.transform.parent = islandParent.transform;
-        grassParent.transform.position = new Vector2(playerBoundsX, playerBoundsY);
-
-        sandParent = new GameObject();
-        sandParent.name = "Sand";
-        sandParent.transform.parent = islandParent.transform;
-        sandParent.transform.position = new Vector2(playerBoundsX, playerBoundsY);
-
-        waterParent = new GameObject();
-        waterParent.name = "Water";
-        waterParent.transform.parent = islandParent.transform;
-        waterParent.transform.position = new Vector2(playerBoundsX, playerBoundsY);
-
-        treeParent = new GameObject();
-        treeParent.name = "Tree";
-        treeParent.transform.parent = islandParent.transform;
-        treeParent.transform.position = new Vector2(playerBoundsX, playerBoundsY);
-
-        increment = Random.Range(1, 5);
-
+        int maxXRight = Random.Range(xMin, xMax);
+        int maxXLeft = Random.Range(xMin, xMax);
         int maxXR = Random.Range(xMin, xMax);
         int maxXL = Random.Range(-xMin, -xMax);
+        int maxX = Random.Range(xMin, xMax);
 
+        int maxYRight = Random.Range(yMin, yMax);
+        int maxYLeft = Random.Range(yMin, yMax);
         int maxYT = Random.Range(yMin, yMax);
         int maxYB = Random.Range(-yMin, -yMax);
+        int maxY = Random.Range(yMin, yMax);
 
         int xPeakPosition = Random.Range(-maxYT, maxYT);
         int yPeakPosition = Random.Range(-maxXR, maxXR);
@@ -148,20 +69,18 @@ public class Generate : MonoBehaviour
 
         for(int y = maxYB; y < maxYT; y++)
         {
-            if (y < 0)
+            if(y < 0)
             {
-                l = Random.Range(((xPeakPosition - y) + maxXL) - increment, ((xPeakPosition - y) + maxXL) + increment);
-                r = Random.Range(((xPeakPosition + y) + maxXR) - increment, ((xPeakPosition + y) + maxXR) + increment);
+                l = Random.Range(((xPeakPosition - y) + maxXL) - 1, ((xPeakPosition - y) + maxXL) + 1);
+                r = Random.Range(((xPeakPosition + y) + maxXR) - 1, ((xPeakPosition + y) + maxXR) + 1);
             }
             else
             {
-                l = Random.Range(((xPeakPosition + y) + maxXL) - increment, ((xPeakPosition + y) + maxXL) + increment);
-                r = Random.Range(((xPeakPosition - y) + maxXR) - increment, ((xPeakPosition - y) + maxXR) + increment);
+                l = Random.Range(((xPeakPosition + y) + maxXL) - 1, ((xPeakPosition + y) + maxXL) + 1);
+                r = Random.Range(((xPeakPosition - y) + maxXR) - 1, ((xPeakPosition - y) + maxXR) + 1);
             }
-
             for(int x = l; x < r; x++)
             {
-
                 //fills top and bottom
                 if (y == maxYB + 2 || y == maxYT - 3)
                     createObject(x, y, 1); //sand
@@ -173,16 +92,16 @@ public class Generate : MonoBehaviour
                     createObject(x, y, 0); //grass
 
                 if ((y > maxYB + 2 && y < maxYT - 3) || (y == maxYB + 2 || y == maxYT - 3))
-                    if (Random.Range(0, 20) == 5)
+                    if(Random.Range(0,20) == 5)
                         createObject(x, y, 3); //tree
 
                 //fills sides
                 if (x == r - 1)
                 {
                     if (y > maxYB + 2 && y < maxYT - 3)
-                        createObject(r, y, 1); // create sand
+                        createObject(r, y, 1);
                     else
-                        createObject(r, y, 2); // create water
+                        createObject(r, y, 2);
                     //--------------------------
                     for (int i2 = 1; i2 < 15; i2++)//add wave/shore/foam block when i2 == 4
                         if (i2 <= 3)
@@ -202,7 +121,7 @@ public class Generate : MonoBehaviour
                         createObject(l - 1, y, 2);
                     //--------------------------
                     for (int i2 = 2; i2 < 15; i2++)//add wave/shore/foam block when i2 == 5
-                        if (i2 <= 4)
+                        if(i2 <= 4)
                             if (y > maxYB + 2 && y < maxYT - 3)
                                 createObject(l - i2, y, 1);
                             else
@@ -226,7 +145,6 @@ public class Generate : MonoBehaviour
             "Water: "+waterCounter+", "+
             "Trees: "+treeCounter
         );
-        islandParent.transform.localPosition = new Vector2(playerBoundsX, playerBoundsY);
     }
 
     void createObject(int x, int y, int type)
@@ -242,29 +160,26 @@ public class Generate : MonoBehaviour
 
         GameObject obj = (GameObject)Instantiate(creationObject);
         obj.name = x.ToString();
+        obj.transform.parent = GameObject.Find(creationObject.name).transform;
         obj.transform.position = new Vector2(x, y);
 
         if (type == 0)
         {
-            obj.transform.parent = GameObject.Find(islandParent.name+"/"+grassParent.name).transform;
             grassList.Add(obj);
             grassCounter = grassList.Count;
         }
         if (type == 1)
         {
-            obj.transform.parent = GameObject.Find(islandParent.name + "/" + sandParent.name).transform;
             sandList.Add(obj);
             sandCounter = sandList.Count;
         }
         if (type == 2)
         {
-            obj.transform.parent = GameObject.Find(islandParent.name + "/" + waterParent.name).transform;
             waterList.Add(obj);
             waterCounter = waterList.Count;
         }
         if (type == 3)
         {
-            obj.transform.parent = GameObject.Find(islandParent.name + "/" + treeParent.name).transform;
             treeList.Add(obj);
             treeCounter = treeList.Count;
         }
@@ -274,15 +189,12 @@ public class Generate : MonoBehaviour
         foreach (GameObject g in grassList)
             Destroy(g);
         grassList.RemoveRange(0, grassList.Count);
-
         foreach (GameObject g in sandList)
             Destroy(g);
         sandList.RemoveRange(0, sandList.Count);
-
         foreach (GameObject g in waterList)
             Destroy(g);
         waterList.RemoveRange(0, waterList.Count);
-
         foreach (GameObject g in treeList)
             Destroy(g);
         treeList.RemoveRange(0, treeList.Count);
